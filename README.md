@@ -1,23 +1,48 @@
 # InterSystems IRIS
 
-## Tipos Numéricos: %Float, %Double e %Decimal
-Este documento descreve os principais tipos numéricos fornecidos pelo InterSystems IRIS:  
-- `%Library.Float` (deprecated)  
-- `%Library.Double`  
-- `%Library.Decimal`
+## 📊 Tipos Numéricos: %Float, %Double e %Decimal
+
+### 🎯 Objetivo do Projeto
+
+Este repositório demonstra de forma prática as diferenças entre os principais tipos numéricos do InterSystems IRIS através de exemplos executáveis e benchmarks de performance. O projeto visa ajudar desenvolvedores a escolher o tipo numérico mais adequado para cada situação.
+
+### 📋 Tipos Numéricos Disponíveis
+
+O InterSystems IRIS oferece três tipos numéricos principais:
+
+- **`%Library.Float`** (deprecated) - Ponto flutuante legado
+- **`%Library.Double`** - Ponto flutuante IEEE 754 (64 bits)  
+- **`%Library.Decimal`** - Ponto fixo decimal exato
+
+### 🚀 Início Rápido
+
+Para começar imediatamente, execute no terminal IRIS:
+
+```objectscript
+; Demonstração rápida das diferenças
+do ##class(IEEE.ExampleNumber).Demo(123.456789)
+
+; Exemplos de soma por tipo
+do ##class(IEEE.SumFloat).execExample()
+do ##class(IEEE.SumDouble).execExample()
+do ##class(IEEE.SumDecimal).execExample()
+```
 
 ---
 
-## 🔹 Estrutura do Projeto e Código
+## 📁 Estrutura do Projeto
 
-Este repositório contém exemplos práticos em ObjectScript para demonstrar diferenças de comportamento e performance entre `%Float`, `%Double` e `%Decimal`.
+### Arquivos do Projeto
 
-- `src/IEEE/ExampleNumber.cls`
-- `src/IEEE/SumFloat.cls`
-- `src/IEEE/SumDouble.cls`
-- `src/IEEE/SumDecimal.cls`
-- `src/IEEE/SumDecimalWithScale.cls`
-- `src/IEEE/Benchmark.cls`
+```
+src/IEEE/
+├── ExampleNumber.cls          # Demonstração de armazenamento por tipo
+├── SumFloat.cls              # Operações com %Float
+├── SumDouble.cls             # Operações com %Double  
+├── SumDecimal.cls            # Operações com %Decimal básico
+├── SumDecimalWithScale.cls   # Operações com %Decimal controlado
+└── Benchmark.cls             # Orquestrador de benchmarks
+```
 
 ### Classes e Responsabilidades
 
@@ -55,64 +80,97 @@ Este repositório contém exemplos práticos em ObjectScript para demonstrar dif
 
 ---
 
-## 🔹 Como Executar os Exemplos
+## ⚡ Como Executar os Exemplos
 
-Abra um terminal do IRIS (ou use o painel do VS Code com a extensão InterSystems) e troque para o namespace apropriado.
+### Pré-requisitos
 
-### Executar demonstrações rápidas
+- InterSystems IRIS instalado e configurado
+- Namespace apropriado configurado
+- Classes compiladas no namespace
 
+### 🎮 Demonstrações Interativas
+
+#### 1. Comparação de Armazenamento
 ```objectscript
-; Exibir diferenças de armazenamento entre tipos
+; Demonstra como o mesmo valor é armazenado em cada tipo
 do ##class(IEEE.ExampleNumber).Demo(123.456789)
-
-; Exemplos de soma por tipo
-do ##class(IEEE.SumFloat).execExample()
-do ##class(IEEE.SumDouble).execExample()
-do ##class(IEEE.SumDecimal).execExample()
-do ##class(IEEE.SumDecimalWithScale).execExample()
 ```
 
-### Executar benchmarks individuais
-
+#### 2. Exemplos de Soma por Tipo
 ```objectscript
-; Ajuste o parâmetro length conforme necessário
-do ##class(IEEE.SumFloat).Benchmark(50000)
-do ##class(IEEE.SumDouble).Benchmark(500000)
-do ##class(IEEE.SumDecimalWithScale).Benchmark(50000)
+; Teste o famoso caso 0.1 + 0.2 em cada tipo
+do ##class(IEEE.SumFloat).execExample()      ; %Float (legado)
+do ##class(IEEE.SumDouble).execExample()     ; %Double (IEEE 754)
+do ##class(IEEE.SumDecimal).execExample()    ; %Decimal (exato)
+do ##class(IEEE.SumDecimalWithScale).execExample() ; %Decimal com escala
 ```
 
-### Executar a suíte de benchmark orquestrada
+### 📊 Benchmarks de Performance
 
+#### Benchmarks Individuais
 ```objectscript
+; Execute cada tipo separadamente
+do ##class(IEEE.SumFloat).Benchmark(50000)           ; %Float
+do ##class(IEEE.SumDouble).Benchmark(500000)         ; %Double (maior amostra)
+do ##class(IEEE.SumDecimalWithScale).Benchmark(50000) ; %Decimal
+```
+
+#### Suíte Completa de Benchmarks
+```objectscript
+; Executa todos os benchmarks em sequência com isolamento
 do ##class(IEEE.Benchmark).execute(100000)
 ```
 
-> Dica: rode cada benchmark mais de uma vez para aquecer caches e reduzir variação. Execute em ambiente estável (sem outras cargas) para resultados mais consistentes.
+> 💡 **Dicas de Performance**: Execute benchmarks múltiplas vezes para aquecer caches e obtenha resultados mais consistentes em ambiente estável.
 
 ---
 
-## 🔹 Interpretação dos Resultados
+## 📈 Interpretação dos Resultados
 
-- Os números da seção de benchmark são ilustrativos e variam por hardware, carga do servidor e versão do IRIS.
-- `%Double` segue IEEE 754: use tolerância ao comparar valores e cuidado com `==` direto.
-- `%Decimal` respeita `SCALE`: ideal para somas de dinheiro e totais exatos.
-- `%Float` é legado e pode diferir em limites/arredondamentos; evite em código novo.
+### Resultados de Benchmark
+- ⚠️ **Importante**: Os tempos são ilustrativos e variam conforme hardware, carga do servidor e versão do IRIS
+- `%Decimal` pode ser mais rápido em alguns cenários devido à otimização interna
+- `%Double` oferece melhor consistência de performance
+- `%Float` apresenta comportamento imprevisível (evitar uso)
 
----
-
-## 🔹 Dicas Práticas
-
-- Use `%Decimal` para domínios financeiros ou quando 0.1 + 0.2 deve ser exatamente 0.3.
-- Use `%Double` para cálculos científicos e estatísticos onde a performance e a ampla faixa dinâmica são mais importantes do que a exatidão decimal.
-- Evite `%Float` em novos desenvolvimentos; migre classes existentes para `%Double` ou `%Decimal` conforme o caso.
-- Controle a exibição com `FORMAT`/`SCALE`, mas lembre-se: `SCALE` em `%Double` e `%Float` afeta exibição, não a precisão interna.
+### Comportamento Esperado
+- **`%Double`**: Segue IEEE 754 - use tolerância em comparações (`epsilon`)
+- **`%Decimal`**: Respeita `SCALE` - ideal para cálculos monetários exatos
+- **`%Float`**: Comportamento inconsistente - migrar para `%Double` ou `%Decimal`
 
 ---
 
-## 🔹 Referências úteis
+## 💡 Guia de Escolha de Tipos
 
-- Documentação InterSystems IRIS: `%Library.Double`, `%Library.Decimal`, `%Library.Float` (deprecated)
-- Padrão IEEE 754 (double-precision): arredondamento e representação
+### Quando Usar Cada Tipo
+
+| Cenário | Tipo Recomendado | Motivo |
+|---------|------------------|--------|
+| 💰 **Cálculos Financeiros** | `%Decimal(SCALE=2)` | Precisão decimal exata |
+| 🧮 **Cálculos Científicos** | `%Double` | Amplo range, performance |
+| 📊 **Estatísticas/ML** | `%Double` | IEEE 754 padrão |
+| 🏦 **Sistemas Bancários** | `%Decimal` | Conformidade regulatória |
+| ⚡ **Performance Crítica** | `%Double` | Otimização de hardware |
+
+### ⚠️ Armadilhas Comuns
+
+- **Nunca use `==` com `%Double`** - use tolerância: `$zabs(a-b) < epsilon`
+- **`%Float` é deprecated** - migre código existente
+- **`SCALE` em `%Double`** afeta apenas exibição, não precisão interna
+- **Conversões implícitas** podem causar perda de precisão
+
+---
+
+## 📚 Referências e Documentação
+
+### Documentação Oficial InterSystems
+- [`%Library.Double`](https://docs.intersystems.com/irisforhealthlatest/csp/docbook/DocBook.UI.Page.cls?KEY=GOBJ_datatypes#GOBJ_datatypes_double) - Ponto flutuante IEEE 754
+- [`%Library.Decimal`](https://docs.intersystems.com/irisforhealthlatest/csp/docbook/DocBook.UI.Page.cls?KEY=GOBJ_datatypes#GOBJ_datatypes_decimal) - Ponto fixo decimal
+- [`%Library.Float`](https://docs.intersystems.com/irisforhealthlatest/csp/docbook/DocBook.UI.Page.cls?KEY=GOBJ_datatypes#GOBJ_datatypes_float) - Deprecated
+
+### Padrões e Especificações
+- [IEEE 754-2019](https://ieeexplore.ieee.org/document/8766229) - Padrão de ponto flutuante
+- [Decimal Arithmetic](https://speleotrove.com/decimal/) - Aritmética decimal exata
 
 
 ## 🔹 %Library.Float (Deprecated)
@@ -240,7 +298,7 @@ Representa um **número em ponto fixo (decimal exato)**.
 ## 🔹 Benchmark de Performance
 
 Foi implementado um teste para comparar a performance de `%Float`, `%Double` e `%Decimal`.  
-Cada tipo executou **1 milhão de cálculos** em **10 execuções distintas**.  
+Cada tipo executou **100 mil de cálculos** em **10 execuções distintas**.  
 A tabela a seguir resume os tempos medidos:
 
 | Tipo      | Tempo mínimo | Tempo máximo | Tempo médio |
