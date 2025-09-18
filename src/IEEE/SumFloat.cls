@@ -25,6 +25,25 @@ ClassMethod execExample()
 	write !,"=======================OBJ=======================",!
 	zwrite obj
 	write !,"=================================================",!
+	/** Resultado:
+=======================%Float=======================
+
+.2 + .1=.3
+=======================OBJ=======================
+obj=2@IEEE.SumFloat  ; <OREF,refs=1>
++----------------- general information ---------------
+|      oref value: 2
+|      class name: IEEE.SumFloat
+| reference count: 1
++----------------- attribute values ------------------
+|       %Concurrency = 1  <Set>
+|             result = .3
+|               sum1 = .2
+|               sum2 = .1
++-----------------------------------------------------
+
+=================================================
+*/
 }
 
 ClassMethod Benchmark(length As %Integer = 50000)

@@ -27,6 +27,31 @@ ClassMethod Demo(value = 123.456789)
     write !,"numFloat  = ", obj.numFloat
     write !,"numDouble = ", obj.numDouble
     write !,"numDecimal= ", obj.numDecimal
+	write !,"-----------------OBJ-----------------",!
+	zwrite obj
+	write !,"-------------------------------------",!
+	/**Resultado:
+Valores armazenados:
+numFloat  = 123.456789
+numDouble = 123.45678900000000056
+numDecimal= 123.456789
+-----------------OBJ-----------------
+obj=2@IEEE.ExampleNumber  ; <OREF,refs=1>
++----------------- general information ---------------
+|      oref value: 2
+|      class name: IEEE.ExampleNumber
+|           %%OID: $lb("8","IEEE.ExampleNumber")
+| reference count: 1
++----------------- attribute values ------------------
+|       %Concurrency = 1  <Set>
+|         numDecimal = 123.456789
+|          numDouble = $double(123.45678900000000056)
+|           numFloat = 123.456789
++-----------------------------------------------------
+
+-------------------------------------
+*/
+
 
     quit
 }
